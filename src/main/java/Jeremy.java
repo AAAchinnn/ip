@@ -13,6 +13,7 @@ public class Jeremy {
         Scanner scanner = new Scanner(System.in);
 
         String[] items = new String[100];
+        boolean[] done = new boolean[100];
         int itemCount = 0;
 
         while (true) {
@@ -32,9 +33,35 @@ public class Jeremy {
                 if (itemCount == 0) {
                     System.out.println(" No items stored yet.");
                 } else {
+                    System.out.println(" Here are the tasks in your list:");
                     for (int i = 0; i < itemCount; i++) {
-                        System.out.println(" " + (i + 1) + ". " + items[i]);
+                        String mark = done[i] ? "X" : " ";
+                        System.out.println(" " + (i + 1) + ".[" + mark + "] " + items[i]);
                     }
+                }
+                System.out.println(line);
+            } else if (trimmed.toLowerCase().startsWith("mark ") || trimmed.toLowerCase().startsWith("unmark ")) {
+                boolean markAsDone = trimmed.toLowerCase().startsWith("mark ");
+                String numberPart = markAsDone ? trimmed.substring(5).trim() : trimmed.substring(7).trim();
+                int index = -1;
+                try {
+                    index = Integer.parseInt(numberPart);
+                } catch (NumberFormatException e) {
+                    index = -1;
+                }
+
+                System.out.println(line);
+                if (index < 1 || index > itemCount) {
+                    System.out.println(" That task number doesn't exist.");
+                } else {
+                    done[index - 1] = markAsDone;
+                    String mark = markAsDone ? "X" : " ";
+                    if (markAsDone) {
+                        System.out.println(" Nice! I've marked this task as done:");
+                    } else {
+                        System.out.println(" OK, I've marked this task as not done yet:");
+                    }
+                    System.out.println("   [" + mark + "] " + items[index - 1]);
                 }
                 System.out.println(line);
             } else if (trimmed.isEmpty()) {
@@ -46,6 +73,7 @@ public class Jeremy {
                 System.out.println(line);
             } else {
                 items[itemCount] = trimmed;
+                done[itemCount] = false;
                 itemCount++;
                 System.out.println(line);
                 System.out.println(" added: " + trimmed);
