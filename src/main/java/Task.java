@@ -1,3 +1,8 @@
+/**
+ * Base class for all task types. Todo, Deadline, and Event
+ * inherit from this and override getTypeIcon() (and toString()
+ * where extra details need to be shown).
+ */
 public abstract class Task {
     protected String description;
     protected boolean isDone;

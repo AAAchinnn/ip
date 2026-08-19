@@ -1,3 +1,4 @@
+/** A task that starts and ends at specific date/times. */
 public class Event extends Task {
     protected String from;
     protected String to;
