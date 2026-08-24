@@ -66,6 +66,9 @@ public class Jeremy {
                 || lower.startsWith("unmark ") || lower.equals("unmark")) {
             handleMark(trimmed, tasks, taskCount[0]);
 
+        } else if (lower.equals("delete") || lower.startsWith("delete ")) {
+            handleDelete(trimmed, tasks, taskCount);
+
         } else if (lower.equals("todo") || lower.startsWith("todo ")) {
             String description = lower.equals("todo") ? "" : trimmed.substring(4).trim();
             addTask(new Todo(requireDescription(description, "todo")), tasks, taskCount);
@@ -81,7 +84,7 @@ public class Jeremy {
         } else {
             throw new JeremyException(
                     "I don't recognize '" + firstWord(trimmed)
-                            + "'. Try: todo, deadline, event, list, mark, unmark, bye.");
+                            + "'. Try: todo, deadline, event, list, mark, unmark, delete, bye.");
         }
     }
 
@@ -140,6 +143,45 @@ public class Jeremy {
             System.out.println(" OK, I've marked this task as not done yet:");
         }
         System.out.println("   " + task);
+        System.out.println(LINE);
+    }
+
+    private static void handleDelete(String trimmed, Task[] tasks, int[] taskCount) throws JeremyException {
+        String numberPart = trimmed.length() > 6 ? trimmed.substring(6).trim() : "";
+
+        if (numberPart.isEmpty()) {
+            throw new JeremyException("Which task? Use: delete <task number>.");
+        }
+
+        int index;
+        try {
+            index = Integer.parseInt(numberPart);
+        } catch (NumberFormatException e) {
+            throw new JeremyException("'" + numberPart + "' isn't a valid task number.");
+        }
+
+        if (taskCount[0] == 0) {
+            throw new JeremyException("Your list is empty — nothing to delete.");
+        }
+        if (index < 1 || index > taskCount[0]) {
+            throw new JeremyException(
+                    "That task number doesn't exist. You have " + taskCount[0]
+                            + " task(s) — pick between 1 and " + taskCount[0] + ".");
+        }
+
+        Task removed = tasks[index - 1];
+
+        // Shift everything after the deleted task one slot to the left.
+        for (int i = index - 1; i < taskCount[0] - 1; i++) {
+            tasks[i] = tasks[i + 1];
+        }
+        tasks[taskCount[0] - 1] = null;
+        taskCount[0]--;
+
+        System.out.println(LINE);
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + removed);
+        System.out.println(" Now you have " + taskCount[0] + " task(s) in the list.");
         System.out.println(LINE);
     }
 
