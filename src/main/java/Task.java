@@ -1,3 +1,5 @@
+package jeremy.task;
+
 /**
  * Base class for all task types. Todo, Deadline, and Event
  * inherit from this and override getTypeIcon() (and toString()
@@ -22,6 +24,10 @@ public abstract class Task {
 
     public boolean isDone() {
         return isDone;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     protected String getStatusIcon() {

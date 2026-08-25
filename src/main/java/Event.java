@@ -1,3 +1,5 @@
+package jeremy.task;
+
 /** A task that starts and ends at specific date/times. */
 public class Event extends Task {
     protected String from;
@@ -7,6 +9,14 @@ public class Event extends Task {
         super(description);
         this.from = from;
         this.to = to;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public String getTo() {
+        return to;
     }
 
     @Override

@@ -1,5 +1,9 @@
+package jeremy.ui;
+
 import java.util.List;
 import java.util.Scanner;
+
+import jeremy.task.Task;
 
 /** Deals with all interactions with the user: reading input and printing output. */
 public class Ui {

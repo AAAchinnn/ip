@@ -1,3 +1,9 @@
+package jeremy.parser;
+
+import jeremy.exception.JeremyException;
+import jeremy.task.Deadline;
+import jeremy.task.Event;
+
 /** Deals with making sense of the user's raw input command. */
 public class Parser {
 

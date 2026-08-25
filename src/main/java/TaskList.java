@@ -1,5 +1,9 @@
+package jeremy.task;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import jeremy.exception.JeremyException;
 
 /**
  * Contains the task list and the operations to add, delete, and

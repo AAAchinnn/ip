@@ -1,3 +1,13 @@
+package jeremy;
+
+import jeremy.exception.JeremyException;
+import jeremy.parser.Parser;
+import jeremy.storage.Storage;
+import jeremy.task.Task;
+import jeremy.task.TaskList;
+import jeremy.task.Todo;
+import jeremy.ui.Ui;
+
 public class Jeremy {
 
     private final Storage storage;

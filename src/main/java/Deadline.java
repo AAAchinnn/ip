@@ -1,3 +1,5 @@
+package jeremy.task;
+
 /** A task that needs to be done before a specific date/time. */
 public class Deadline extends Task {
     protected String by;
@@ -5,6 +7,10 @@ public class Deadline extends Task {
     public Deadline(String description, String by) {
         super(description);
         this.by = by;
+    }
+
+    public String getBy() {
+        return by;
     }
 
     @Override

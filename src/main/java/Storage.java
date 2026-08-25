@@ -1,3 +1,5 @@
+package jeremy.storage;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,6 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import jeremy.exception.JeremyException;
+import jeremy.task.Deadline;
+import jeremy.task.Event;
+import jeremy.task.Task;
+import jeremy.task.Todo;
 
 /** Deals with loading tasks from the data file and saving tasks to it. */
 public class Storage {
@@ -67,13 +75,13 @@ public class Storage {
     private String encode(Task task) {
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
-            return "D|" + (task.isDone() ? "1" : "0") + "|" + task.description + "|" + deadline.by;
+            return "D|" + (task.isDone() ? "1" : "0") + "|" + task.getDescription() + "|" + deadline.getBy();
         } else if (task instanceof Event) {
             Event event = (Event) task;
-            return "E|" + (task.isDone() ? "1" : "0") + "|" + task.description
-                    + "|" + event.from + "|" + event.to;
+            return "E|" + (task.isDone() ? "1" : "0") + "|" + task.getDescription()
+                    + "|" + event.getFrom() + "|" + event.getTo();
         } else {
-            return "T|" + (task.isDone() ? "1" : "0") + "|" + task.description;
+            return "T|" + (task.isDone() ? "1" : "0") + "|" + task.getDescription();
         }
     }
 
