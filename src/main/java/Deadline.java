@@ -1,17 +1,9 @@
 package jeremy.task;
 
-/**
- * Represents a task that needs to be completed before a specific date or time.
- */
+/** A task that needs to be done before a specific date/time. */
 public class Deadline extends Task {
     protected String by;
 
-    /**
-     * Creates a deadline task with the specified description and due date or time.
-     *
-     * @param description Description of the task.
-     * @param by Date or time by which the task should be completed.
-     */
     public Deadline(String description, String by) {
         super(description);
         this.by = by;

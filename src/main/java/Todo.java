@@ -1,14 +1,7 @@
 package jeremy.task;
 
-/**
- * Represents a task without a date or time attached.
- */
+/** A task without any date/time attached, e.g. "visit new theme park". */
 public class Todo extends Task {
-    /**
-     * Creates a todo task with the specified description.
-     *
-     * @param description Description of the task.
-     */
     public Todo(String description) {
         super(description);
     }

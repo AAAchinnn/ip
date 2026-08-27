@@ -11,7 +11,6 @@ import jeremy.exception.JeremyException;
 import jeremy.task.Deadline;
 import jeremy.task.Event;
 
-
 public class ParserTest {
 
     private Parser parser;

@@ -16,26 +16,18 @@ import jeremy.task.Event;
 import jeremy.task.Task;
 import jeremy.task.Todo;
 
-/**
- * Loads tasks from the data file and saves tasks to persistent storage.
- */
+/** Deals with loading tasks from the data file and saving tasks to it. */
 public class Storage {
     private final Path dataFile;
 
-    /**
-     * Creates a storage handler for the specified data file.
-     *
-     * @param filePath Path to the task data file.
-     */
     public Storage(String filePath) {
         this.dataFile = Paths.get(filePath);
     }
 
     /**
-     * Loads tasks from the data file, skipping corrupted entries when possible.
-     *
-     * @return Loaded tasks, or an empty list when the file does not exist.
-     * @throws JeremyException If the file cannot be read.
+     * Loads tasks from the data file. Returns an empty list if the
+     * file doesn't exist yet. Individual corrupted lines are skipped
+     * with a warning; a total read failure throws JeremyException.
      */
     public List<Task> load() throws JeremyException {
         List<Task> loadedTasks = new ArrayList<>();
@@ -50,38 +42,32 @@ public class Storage {
                 if (line.isEmpty()) {
                     continue;
                 }
-
                 try {
                     loadedTasks.add(parseSavedTask(line));
-                } catch (JeremyException exception) {
+                } catch (JeremyException e) {
                     System.out.println(" Warning: I skipped a corrupted saved task.");
                 }
             }
-        } catch (IOException exception) {
+        } catch (IOException e) {
             throw new JeremyException("I couldn't load your saved tasks.");
         }
 
         return loadedTasks;
     }
 
-    /**
-     * Saves the supplied tasks to the data file, replacing the previous contents.
-     *
-     * @param tasks Tasks to save.
-     */
+    /** Saves the given tasks to the data file, overwriting whatever was there before. */
     public void save(List<Task> tasks) {
         try {
             if (dataFile.getParent() != null) {
                 Files.createDirectories(dataFile.getParent());
             }
-
             try (BufferedWriter writer = Files.newBufferedWriter(dataFile, StandardCharsets.UTF_8)) {
                 for (Task task : tasks) {
                     writer.write(encode(task));
                     writer.newLine();
                 }
             }
-        } catch (IOException exception) {
+        } catch (IOException e) {
             System.out.println(" Warning: I couldn't save your tasks.");
         }
     }

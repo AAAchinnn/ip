@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import jeremy.exception.JeremyException;
 
-
 public class TaskListTest {
 
     private TaskList taskList;
@@ -97,6 +96,33 @@ public class TaskListTest {
     public void markDone_emptyList_throwsWithNothingToMarkMessage() {
         JeremyException ex = assertThrows(JeremyException.class, () -> taskList.markDone(1));
         assertTrue(ex.getMessage().contains("nothing to mark"));
+    }
+
+    @Test
+    public void find_keyword_returnsMatchingTasks() {
+        taskList.add(new Todo("read book"));
+        taskList.add(new Todo("return book"));
+        taskList.add(new Todo("go jogging"));
+
+        List<Task> matches = taskList.find("book");
+
+        assertEquals(2, matches.size());
+        assertEquals("read book", matches.get(0).getDescription());
+        assertEquals("return book", matches.get(1).getDescription());
+    }
+
+    @Test
+    public void find_isCaseInsensitive() {
+        taskList.add(new Todo("Read BOOK"));
+
+        assertEquals(1, taskList.find("book").size());
+    }
+
+    @Test
+    public void find_noMatches_returnsEmptyList() {
+        taskList.add(new Todo("read book"));
+
+        assertTrue(taskList.find("movie").isEmpty());
     }
 
     @Test

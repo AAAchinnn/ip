@@ -8,9 +8,6 @@ import jeremy.task.TaskList;
 import jeremy.task.Todo;
 import jeremy.ui.Ui;
 
-/**
- * Runs the Jeremy task-management application and coordinates its components.
- */
 public class Jeremy {
 
     private final Storage storage;
@@ -18,11 +15,6 @@ public class Jeremy {
     private final Ui ui;
     private final Parser parser;
 
-    /**
-     * Creates the application and loads any tasks previously saved at the given path.
-     *
-     * @param filePath Path to the file used for task persistence.
-     */
     public Jeremy(String filePath) {
         ui = new Ui();
         parser = new Parser();
@@ -31,16 +23,13 @@ public class Jeremy {
         TaskList loadedTasks;
         try {
             loadedTasks = new TaskList(storage.load());
-        } catch (JeremyException exception) {
+        } catch (JeremyException e) {
             ui.showLoadingError();
             loadedTasks = new TaskList();
         }
         tasks = loadedTasks;
     }
 
-    /**
-     * Runs the command loop until the input stream ends or the user enters the exit command.
-     */
     public void run() {
         ui.showWelcome();
 
@@ -60,8 +49,8 @@ public class Jeremy {
 
             try {
                 handleCommand(trimmed);
-            } catch (JeremyException exception) {
-                ui.showError(exception.getMessage());
+            } catch (JeremyException e) {
+                ui.showError(e.getMessage());
             }
         }
 
@@ -75,6 +64,9 @@ public class Jeremy {
         switch (commandWord) {
         case "list":
             ui.showTaskList(tasks.asList());
+            break;
+        case "find":
+            handleFind(args);
             break;
         case "mark":
             handleMark(args);
@@ -97,8 +89,15 @@ public class Jeremy {
         default:
             throw new JeremyException(
                     "I don't recognize '" + commandWord
-                            + "'. Try: todo, deadline, event, list, mark, unmark, delete, bye.");
+                            + "'. Try: todo, deadline, event, list, find, mark, unmark, delete, bye.");
         }
+    }
+
+    private void handleFind(String args) throws JeremyException {
+        if (args.isEmpty()) {
+            throw new JeremyException("What keyword should I search for? Use: find <keyword>.");
+        }
+        ui.showMatchingTasks(tasks.find(args));
     }
 
     private void handleMark(String args) throws JeremyException {
@@ -128,11 +127,6 @@ public class Jeremy {
         ui.showTaskAdded(newTask, tasks.size());
     }
 
-    /**
-     * Starts the Jeremy application using the default task data file.
-     *
-     * @param args Command-line arguments, which are currently ignored.
-     */
     public static void main(String[] args) {
         new Jeremy("data/duke.txt").run();
     }
