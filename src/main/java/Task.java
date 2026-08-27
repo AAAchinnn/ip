@@ -1,23 +1,32 @@
 package jeremy.task;
 
 /**
- * Base class for all task types. Todo, Deadline, and Event
- * inherit from this and override getTypeIcon() (and toString()
- * where extra details need to be shown).
+ * Provides common state and behavior for all task types.
  */
 public abstract class Task {
     protected String description;
     protected boolean isDone;
 
+    /**
+     * Creates an incomplete task with the specified description.
+     *
+     * @param description Description of the task.
+     */
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    /**
+     * Marks the task as completed.
+     */
     public void markAsDone() {
         this.isDone = true;
     }
 
+    /**
+     * Marks the task as incomplete.
+     */
     public void markAsNotDone() {
         this.isDone = false;
     }

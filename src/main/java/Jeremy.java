@@ -8,6 +8,9 @@ import jeremy.task.TaskList;
 import jeremy.task.Todo;
 import jeremy.ui.Ui;
 
+/**
+ * Runs the Jeremy task-management application and coordinates its components.
+ */
 public class Jeremy {
 
     private final Storage storage;
@@ -15,6 +18,11 @@ public class Jeremy {
     private final Ui ui;
     private final Parser parser;
 
+    /**
+     * Creates the application and loads any tasks previously saved at the given path.
+     *
+     * @param filePath Path to the file used for task persistence.
+     */
     public Jeremy(String filePath) {
         ui = new Ui();
         parser = new Parser();
@@ -23,13 +31,16 @@ public class Jeremy {
         TaskList loadedTasks;
         try {
             loadedTasks = new TaskList(storage.load());
-        } catch (JeremyException e) {
+        } catch (JeremyException exception) {
             ui.showLoadingError();
             loadedTasks = new TaskList();
         }
         tasks = loadedTasks;
     }
 
+    /**
+     * Runs the command loop until the input stream ends or the user enters the exit command.
+     */
     public void run() {
         ui.showWelcome();
 
@@ -49,8 +60,8 @@ public class Jeremy {
 
             try {
                 handleCommand(trimmed);
-            } catch (JeremyException e) {
-                ui.showError(e.getMessage());
+            } catch (JeremyException exception) {
+                ui.showError(exception.getMessage());
             }
         }
 
@@ -117,6 +128,11 @@ public class Jeremy {
         ui.showTaskAdded(newTask, tasks.size());
     }
 
+    /**
+     * Starts the Jeremy application using the default task data file.
+     *
+     * @param args Command-line arguments, which are currently ignored.
+     */
     public static void main(String[] args) {
         new Jeremy("data/duke.txt").run();
     }
