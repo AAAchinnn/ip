@@ -1,6 +1,7 @@
 package jeremy.task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jeremy.exception.JeremyException;
@@ -17,10 +18,12 @@ public class TaskList {
     }
 
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "Initial task list must not be null";
         this.tasks = new ArrayList<>(tasks);
     }
 
     public void add(Task task) {
+        assert task != null : "Cannot add a null task";
         tasks.add(task);
     }
 
@@ -56,12 +59,13 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    /** Returns the underlying list. Callers should treat this as read-mostly. */
+    /** Returns a read-only view of the current tasks. */
     public List<Task> asList() {
-        return tasks;
+        return Collections.unmodifiableList(tasks);
     }
 
     public List<Task> find(String keyword) {
+        assert keyword != null : "Search keyword must not be null";
         List<Task> matchingTasks = new ArrayList<>();
         String lowerCaseKeyword = keyword.toLowerCase();
         for (Task task : tasks) {
