@@ -7,6 +7,8 @@ public class Event extends Task {
 
     public Event(String description, String from, String to) {
         super(description);
+        assert from != null && !from.isBlank() : "Event must have a start time";
+        assert to != null && !to.isBlank() : "Event must have an end time";
         this.from = from;
         this.to = to;
     }

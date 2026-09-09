@@ -21,6 +21,7 @@ public class Storage {
     private final Path dataFile;
 
     public Storage(String filePath) {
+        assert filePath != null && !filePath.isBlank() : "Storage path must be provided";
         this.dataFile = Paths.get(filePath);
     }
 
@@ -57,6 +58,7 @@ public class Storage {
 
     /** Saves the given tasks to the data file, overwriting whatever was there before. */
     public void save(List<Task> tasks) {
+        assert tasks != null : "Tasks to save must not be null";
         try {
             if (dataFile.getParent() != null) {
                 Files.createDirectories(dataFile.getParent());
@@ -86,6 +88,7 @@ public class Storage {
     }
 
     private Task parseSavedTask(String line) throws JeremyException {
+        assert line != null : "Saved task line must not be null";
         String[] parts = line.split("\\|", -1);
 
         if (parts.length < 3) {
