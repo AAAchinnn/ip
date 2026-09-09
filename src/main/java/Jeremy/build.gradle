@@ -47,6 +47,11 @@ test {
     useJUnitPlatform()
 }
 
+// Enable Java assert statements when the GUI is run.
+tasks.named('run') {
+    enableAssertions = true
+}
+
 // There are no test source directories in the current flat project layout.
 // Disable the compiler task itself so Gradle 9 does not validate it against
 // the generated application start-script files.

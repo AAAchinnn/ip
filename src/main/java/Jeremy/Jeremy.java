@@ -38,6 +38,7 @@ public class Jeremy extends Application {
     }
 
     public Jeremy(String filePath) {
+        assert filePath != null && !filePath.isBlank() : "Data file path must be provided";
         ui = new Ui();
         parser = new Parser();
         storage = new Storage(filePath);
@@ -49,6 +50,7 @@ public class Jeremy extends Application {
             ui.showLoadingError();
             loadedTasks = new TaskList();
         }
+        assert loadedTasks != null : "Task list must be initialized after loading";
         tasks = loadedTasks;
     }
 
@@ -82,6 +84,7 @@ public class Jeremy extends Application {
     /** Builds and displays the JavaFX user interface. */
     @Override
     public void start(Stage stage) {
+        assert stage != null : "JavaFX must provide a stage";
         scrollPane = new ScrollPane();
         dialogContainer = new VBox();
         scrollPane.setContent(dialogContainer);
@@ -124,6 +127,7 @@ public class Jeremy extends Application {
 
     /** Adds the user's message and Jeremy's response, then clears the input. */
     private void handleUserInput() {
+        assert userInput != null && dialogContainer != null : "GUI controls must be initialized";
         String userText = userInput.getText();
         String jeremyText = getResponse(userText);
         dialogContainer.getChildren().addAll(
@@ -204,6 +208,7 @@ public class Jeremy extends Application {
 
     /** Processes a GUI command using the same parser and task data as the CLI. */
     public String getResponse(String input) {
+        assert input != null : "GUI command input must not be null";
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
             return "I didn't quite catch that — type a command, or 'bye' to exit.";

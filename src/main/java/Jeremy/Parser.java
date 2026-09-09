@@ -9,6 +9,7 @@ public class Parser {
 
     /** Returns the command word (first token, lower-cased) of the input. */
     public String getCommandWord(String fullCommand) {
+        assert fullCommand != null : "Command must not be null";
         String trimmed = fullCommand.trim();
         int spaceIndex = trimmed.indexOf(' ');
         String word = spaceIndex >= 0 ? trimmed.substring(0, spaceIndex) : trimmed;
@@ -17,6 +18,7 @@ public class Parser {
 
     /** Returns everything after the first token, trimmed. */
     public String getArguments(String fullCommand) {
+        assert fullCommand != null : "Command must not be null";
         String trimmed = fullCommand.trim();
         int spaceIndex = trimmed.indexOf(' ');
         return spaceIndex >= 0 ? trimmed.substring(spaceIndex + 1).trim() : "";
@@ -24,6 +26,8 @@ public class Parser {
 
     /** Parses a task-number argument for mark/unmark/delete style commands. */
     public int parseIndex(String args, String actionWord) throws JeremyException {
+        assert args != null : "Command arguments must not be null";
+        assert actionWord != null && !actionWord.isBlank() : "Action word must be provided";
         if (args.isEmpty()) {
             throw new JeremyException("Which task? Use: " + actionWord + " <task number>.");
         }
@@ -35,6 +39,7 @@ public class Parser {
     }
 
     public String parseTodoDescription(String args) throws JeremyException {
+        assert args != null : "Todo arguments must not be null";
         if (args.isEmpty()) {
             throw new JeremyException("The description of a todo cannot be empty.");
         }
@@ -42,6 +47,7 @@ public class Parser {
     }
 
     public Deadline parseDeadline(String args) throws JeremyException {
+        assert args != null : "Deadline arguments must not be null";
         int byIndex = args.indexOf("/by");
         String description = byIndex >= 0 ? args.substring(0, byIndex).trim() : args.trim();
         String by = byIndex >= 0 ? args.substring(byIndex + 3).trim() : "";
@@ -62,6 +68,7 @@ public class Parser {
     }
 
     public Event parseEvent(String args) throws JeremyException {
+        assert args != null : "Event arguments must not be null";
         int fromIndex = args.indexOf("/from");
         int toIndex = args.indexOf("/to");
         String description = fromIndex >= 0 ? args.substring(0, fromIndex).trim() : args.trim();

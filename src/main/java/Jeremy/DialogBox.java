@@ -11,6 +11,7 @@ public class DialogBox extends HBox {
 
     /** Creates a right-aligned dialog box for the user. */
     private DialogBox(String message) {
+        assert message != null : "Dialog message must not be null";
         text = new Label(message);
         text.setWrapText(true);
         setAlignment(Pos.TOP_RIGHT);
@@ -19,6 +20,7 @@ public class DialogBox extends HBox {
 
     /** Flips the dialog box to the left for Jeremy's response. */
     private void flip() {
+        assert getChildren().size() == 1 : "A text-only dialog must contain one child";
         setAlignment(Pos.TOP_LEFT);
     }
 

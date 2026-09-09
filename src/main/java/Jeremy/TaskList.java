@@ -17,10 +17,12 @@ public class TaskList {
     }
 
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "Initial task list must not be null";
         this.tasks = new ArrayList<>(tasks);
     }
 
     public void add(Task task) {
+        assert task != null : "Cannot add a null task";
         tasks.add(task);
     }
 
@@ -62,6 +64,7 @@ public class TaskList {
     }
 
     public List<Task> find(String keyword) {
+        assert keyword != null : "Search keyword must not be null";
         List<Task> matchingTasks = new ArrayList<>();
         String lowerCaseKeyword = keyword.toLowerCase();
         for (Task task : tasks) {
