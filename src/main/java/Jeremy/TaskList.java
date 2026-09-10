@@ -1,6 +1,7 @@
 package jeremy.task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jeremy.exception.JeremyException;
@@ -58,9 +59,9 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    /** Returns the underlying list. Callers should treat this as read-mostly. */
+    /** Returns a read-only view of the current tasks. */
     public List<Task> asList() {
-        return tasks;
+        return Collections.unmodifiableList(tasks);
     }
 
     public List<Task> find(String keyword) {
