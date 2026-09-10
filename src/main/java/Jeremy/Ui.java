@@ -105,6 +105,15 @@ public class Ui {
         showLine();
     }
 
+    public void showScheduleConflict(List<Task> conflicts) {
+        showLine();
+        System.out.println(" Warning: this task may clash with:");
+        for (Task conflict : conflicts) {
+            System.out.println("   - " + conflict);
+        }
+        showLine();
+    }
+
     public void showTaskDeleted(Task task, int taskCount) {
         showLine();
         System.out.println(" Noted. I've removed this task:");

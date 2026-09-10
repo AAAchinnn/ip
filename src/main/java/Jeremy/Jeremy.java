@@ -225,8 +225,12 @@ public class Jeremy extends Application {
     }
 
     private void addTask(Task newTask) {
+        List<Task> conflicts = ScheduleConflictDetector.findConflicts(newTask, tasks.asList());
         tasks.add(newTask);
         storage.save(tasks.asList());
+        if (!conflicts.isEmpty()) {
+            ui.showScheduleConflict(conflicts);
+        }
         ui.showTaskAdded(newTask, tasks.size());
     }
 
@@ -288,10 +292,20 @@ public class Jeremy extends Application {
     }
 
     private String formatAddedTask(Task task) {
+        List<Task> conflicts = ScheduleConflictDetector.findConflicts(task, tasks.asList());
         tasks.add(task);
         storage.save(tasks.asList());
-        return "Got it. I've added this task:\n" + task
+        String warning = conflicts.isEmpty() ? "" : formatConflictWarning(conflicts) + "\n";
+        return warning + "Got it. I've added this task:\n" + task
                 + "\nNow you have " + tasks.size() + " task(s) in the list.";
+    }
+
+    private String formatConflictWarning(List<Task> conflicts) {
+        StringBuilder warning = new StringBuilder("Warning: this task may clash with:");
+        for (Task conflict : conflicts) {
+            warning.append("\n- ").append(conflict);
+        }
+        return warning.toString();
     }
 
     private String formatMarkedTask(int index, boolean markDone) throws JeremyException {
