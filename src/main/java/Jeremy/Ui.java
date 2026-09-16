@@ -18,14 +18,14 @@ public class Ui {
 
     public void showWelcome() {
         showLine();
-        System.out.println(" Hello!, I'm Jeremy");
-        System.out.println(" What can I do for you?");
+        System.out.println(" Hey, I'm Jeremy — your low-key task companion.");
+        System.out.println(" Let's get your setlist sorted.");
         showLine();
     }
 
     public void showBye() {
         showLine();
-        System.out.println(" Bye. Hope to see you again soon!");
+        System.out.println(" Session over. Keep your deadlines loud and your stress low.");
         showLine();
     }
 
@@ -43,7 +43,7 @@ public class Ui {
 
     public void showEmptyInputMessage() {
         showLine();
-        System.out.println(" I didn't quite catch that — type something, or 'bye' to exit.");
+        System.out.println(" No signal came through — type a command, or 'bye' to exit.");
         showLine();
     }
 
@@ -60,9 +60,9 @@ public class Ui {
     public void showTaskList(List<Task> tasks) {
         showLine();
         if (tasks.isEmpty()) {
-            System.out.println(" No items stored yet.");
+            System.out.println(" No tasks on the setlist yet.");
         } else {
-            System.out.println(" Here are the tasks in your list:");
+            System.out.println(" Setlist of tasks:");
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println(" " + (i + 1) + "." + tasks.get(i));
             }
@@ -73,9 +73,9 @@ public class Ui {
     public void showMatchingTasks(List<Task> tasks) {
         showLine();
         if (tasks.isEmpty()) {
-            System.out.println(" No matching tasks found.");
+            System.out.println(" No matches in the setlist.");
         } else {
-            System.out.println(" Here are the matching tasks in your list:");
+            System.out.println(" Matching tracks:");
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println(" " + (i + 1) + "." + tasks.get(i));
             }
@@ -85,21 +85,21 @@ public class Ui {
 
     public void showTaskMarked(Task task) {
         showLine();
-        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println(" Status updated — task marked as done:");
         System.out.println("   " + task);
         showLine();
     }
 
     public void showTaskUnmarked(Task task) {
         showLine();
-        System.out.println(" OK, I've marked this task as not done yet:");
+        System.out.println(" Status updated — task marked as not done:");
         System.out.println("   " + task);
         showLine();
     }
 
     public void showTaskAdded(Task task, int taskCount) {
         showLine();
-        System.out.println(" Got it. I've added this task:");
+        System.out.println(" Locked in. Added to the setlist:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + taskCount + " task(s) in the list.");
         showLine();
@@ -116,7 +116,7 @@ public class Ui {
 
     public void showTaskDeleted(Task task, int taskCount) {
         showLine();
-        System.out.println(" Noted. I've removed this task:");
+        System.out.println(" Cleared from the setlist:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + taskCount + " task(s) in the list.");
         showLine();

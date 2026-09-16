@@ -107,10 +107,16 @@ public class Jeremy extends Application {
         scrollPane.setContent(dialogContainer);
 
         userInput = new TextField();
-        sendButton = new Button("Send");
+        userInput.setPromptText("drop a command here...");
+        sendButton = new Button("▶ SEND");
 
         AnchorPane mainLayout = new AnchorPane();
         mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
+        mainLayout.setStyle(WINDOW_STYLE);
+
+        configureLayout(mainLayout);
+        return mainLayout;
+    }
 
         configureLayout(mainLayout);
         return mainLayout;
@@ -118,7 +124,7 @@ public class Jeremy extends Application {
 
     private void configureStage(Stage stage, AnchorPane mainLayout) {
         stage.setScene(new Scene(mainLayout));
-        stage.setTitle("Jeremy");
+        stage.setTitle(WINDOW_TITLE);
         stage.setResizable(false);
         stage.setMinHeight(WINDOW_HEIGHT);
         stage.setMinWidth(WINDOW_WIDTH);
@@ -132,6 +138,20 @@ public class Jeremy extends Application {
         scrollPane.setVvalue(BOTTOM_SCROLL_VALUE);
         scrollPane.setFitToWidth(true);
         dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        dialogContainer.setSpacing(DIALOG_SPACING);
+        dialogContainer.setStyle(WINDOW_STYLE);
+
+        userInput.setPrefWidth(INPUT_WIDTH);
+        userInput.setStyle(INPUT_STYLE);
+        sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
+        sendButton.setStyle(BUTTON_STYLE);
+        scrollPane.setStyle("-fx-background: #1f1e1d; -fx-border-color: #5d5a52;");
+        AnchorPane.setTopAnchor(scrollPane, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(sendButton, LAYOUT_PADDING);
+        AnchorPane.setRightAnchor(sendButton, LAYOUT_PADDING);
+        AnchorPane.setLeftAnchor(userInput, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(userInput, LAYOUT_PADDING);
+    }
 
         userInput.setPrefWidth(INPUT_WIDTH);
         sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
@@ -239,10 +259,10 @@ public class Jeremy extends Application {
         assert input != null : "GUI command input must not be null";
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
-            return "I didn't quite catch that — type a command, or 'bye' to exit.";
+            return "No signal came through — type a command, or 'bye' to exit.";
         }
         if (trimmed.equalsIgnoreCase("bye")) {
-            return "Bye. Hope to see you again soon!";
+            return "Session over. Keep your deadlines loud and your stress low.";
         }
 
         try {
@@ -251,13 +271,12 @@ public class Jeremy extends Application {
 
             switch (commandWord) {
             case "list":
-                return formatTaskList("Here are the tasks in your list:", tasks.asList(), "No items stored yet.");
+                return formatTaskList("Setlist of tasks:", tasks.asList(), "No tasks on the setlist yet.");
             case "find":
                 if (args.isEmpty()) {
                     throw new JeremyException("What keyword should I search for? Use: find <keyword>.");
                 }
-                return formatTaskList("Here are the matching tasks in your list:", tasks.find(args),
-                        "No matching tasks found.");
+                return formatTaskList("Matching tracks:", tasks.find(args), "No matches in the setlist.");
             case "mark":
                 return formatMarkedTask(parser.parseIndex(args, "mark"), true);
             case "unmark":
@@ -272,7 +291,7 @@ public class Jeremy extends Application {
                 return formatAddedTask(parser.parseEvent(args));
             default:
                 throw new JeremyException(
-                        "I don't recognize '" + commandWord
+                        "That command missed the beat: '" + commandWord
                                 + "'. Try: todo, deadline, event, list, find, mark, unmark, delete, bye.");
             }
         } catch (JeremyException e) {
@@ -311,14 +330,14 @@ public class Jeremy extends Application {
     private String formatMarkedTask(int index, boolean markDone) throws JeremyException {
         Task task = markDone ? tasks.markDone(index) : tasks.markNotDone(index);
         storage.save(tasks.asList());
-        String action = markDone ? "done" : "not done yet";
-        return "OK, I've marked this task as " + action + ":\n" + task;
+        String action = markDone ? "done" : "not done";
+        return "Status updated — task marked as " + action + ":\n" + task;
     }
 
     private String formatDeletedTask(int index) throws JeremyException {
         Task removed = tasks.delete(index);
         storage.save(tasks.asList());
-        return "Noted. I've removed this task:\n" + removed
+        return "Cleared from the setlist:\n" + removed
                 + "\nNow you have " + tasks.size() + " task(s) in the list.";
     }
 
