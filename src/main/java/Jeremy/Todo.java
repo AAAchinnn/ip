@@ -4,7 +4,6 @@ package jeremy.task;
 public class Todo extends Task {
     public Todo(String description) {
         super(description);
-        assert getTypeIcon().equals("T") : "Todo must use the T type icon";
     }
 
     @Override

@@ -47,7 +47,6 @@ test {
     useJUnitPlatform()
 }
 
-// Enable Java assert statements when the GUI is run.
 tasks.named('run') {
     enableAssertions = true
 }
