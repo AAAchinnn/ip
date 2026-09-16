@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,7 +23,11 @@ public class Storage {
 
     public Storage(String filePath) {
         assert filePath != null && !filePath.isBlank() : "Storage path must be provided";
-        this.dataFile = Paths.get(filePath);
+        try {
+            this.dataFile = Paths.get(filePath);
+        } catch (InvalidPathException | NullPointerException e) {
+            throw new IllegalArgumentException("The storage path is invalid.", e);
+        }
     }
 
     /**
@@ -32,11 +37,12 @@ public class Storage {
      */
     public List<Task> load() throws JeremyException {
         List<Task> loadedTasks = new ArrayList<>();
-        if (!Files.exists(dataFile)) {
-            return loadedTasks;
-        }
+        try {
+            if (!Files.exists(dataFile)) {
+                return loadedTasks;
+            }
 
-        try (BufferedReader reader = Files.newBufferedReader(dataFile, StandardCharsets.UTF_8)) {
+            try (BufferedReader reader = Files.newBufferedReader(dataFile, StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
@@ -49,7 +55,8 @@ public class Storage {
                     System.out.println(" Warning: I skipped a corrupted saved task.");
                 }
             }
-        } catch (IOException e) {
+            }
+        } catch (IOException | SecurityException e) {
             throw new JeremyException("I couldn't load your saved tasks.");
         }
 
@@ -69,7 +76,7 @@ public class Storage {
                     writer.newLine();
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             System.out.println(" Warning: I couldn't save your tasks.");
         }
     }
