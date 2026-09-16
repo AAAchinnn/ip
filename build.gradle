@@ -18,13 +18,13 @@ java {
 sourceSets {
     main {
         java {
-            srcDirs = ['main/java']
+            srcDirs = ['src/main/java']
         }
     }
 
     test {
         java {
-            srcDirs = ['test/java']
+            srcDirs = ['src/test/java']
         }
     }
 }
@@ -37,6 +37,7 @@ javafx {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 application {
@@ -56,8 +57,27 @@ tasks.named('run') {
     enableAssertions = true
 }
 
+// Keep the ordinary JAR separate from the executable fat JAR. This prevents
+// Gradle's application distribution tasks from seeing the same file as both
+// an input and an output of different tasks.
+tasks.named('jar') {
+    archiveClassifier = 'plain'
+}
+
 tasks.named('shadowJar') {
     archiveBaseName = 'jeremy'
     archiveClassifier = ''
     mergeServiceFiles()
+}
+
+tasks.named('startScripts') {
+    dependsOn tasks.named('shadowJar')
+}
+
+tasks.named('distZip') {
+    dependsOn tasks.named('shadowJar')
+}
+
+tasks.named('distTar') {
+    dependsOn tasks.named('shadowJar')
 }

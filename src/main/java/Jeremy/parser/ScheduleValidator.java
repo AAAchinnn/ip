@@ -4,6 +4,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,7 +90,8 @@ public final class ScheduleValidator {
 
             try {
                 if (meridiem != null) {
-                    LocalTime.parse(String.format("%02d:%02d %s", hour, minute, meridiem),
+                    LocalTime.parse(String.format("%02d:%02d %s", hour, minute,
+                                    meridiem.toUpperCase(Locale.ROOT)),
                             java.time.format.DateTimeFormatter.ofPattern("hh:mm a"));
                 } else {
                     LocalTime.of(hour, minute);

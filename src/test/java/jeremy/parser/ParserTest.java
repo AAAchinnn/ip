@@ -30,6 +30,7 @@ public class ParserTest {
     public void getArguments_returnsTextAfterFirstToken() {
         assertEquals("read book", parser.getArguments("todo read book"));
         assertEquals("", parser.getArguments("list"));
+        assertEquals("read book", parser.getArguments("  todo   read book  "));
     }
 
     @Test
@@ -67,6 +68,18 @@ public class ParserTest {
     }
 
     @Test
+    public void parseDeadline_repeatedByParameter_throwsJeremyException() {
+        assertThrows(JeremyException.class,
+                () -> parser.parseDeadline("return book /by Sunday /by Monday"));
+    }
+
+    @Test
+    public void parseDeadline_invalidDate_throwsJeremyException() {
+        assertThrows(JeremyException.class,
+                () -> parser.parseDeadline("return book /by 30/2/2025"));
+    }
+
+    @Test
     public void parseEvent_wellFormed_extractsAllThreeFields() throws JeremyException {
         Event event = parser.parseEvent("meeting /from Mon 2pm /to 4pm");
 
@@ -78,6 +91,18 @@ public class ParserTest {
     @Test
     public void parseEvent_missingToClause_throwsJeremyException() {
         assertThrows(JeremyException.class, () -> parser.parseEvent("meeting /from Mon 2pm"));
+    }
+
+    @Test
+    public void parseEvent_repeatedParameter_throwsJeremyException() {
+        assertThrows(JeremyException.class,
+                () -> parser.parseEvent("meeting /from 2pm /from 3pm /to 4pm"));
+    }
+
+    @Test
+    public void parseEvent_endNotAfterStart_throwsJeremyException() {
+        assertThrows(JeremyException.class,
+                () -> parser.parseEvent("meeting /from 4pm /to 4pm"));
     }
 
     @Test
