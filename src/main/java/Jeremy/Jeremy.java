@@ -22,6 +22,15 @@ import jeremy.ui.Ui;
 
 public class Jeremy extends Application {
 
+    private static final double WINDOW_WIDTH = 400.0;
+    private static final double WINDOW_HEIGHT = 600.0;
+    private static final double SCROLL_PANE_WIDTH = 385.0;
+    private static final double SCROLL_PANE_HEIGHT = 535.0;
+    private static final double INPUT_WIDTH = 325.0;
+    private static final double SEND_BUTTON_WIDTH = 55.0;
+    private static final double LAYOUT_PADDING = 1.0;
+    private static final double BOTTOM_SCROLL_VALUE = 1.0;
+
     private final Storage storage;
     private final TaskList tasks;
     private final Ui ui;
@@ -85,44 +94,79 @@ public class Jeremy extends Application {
     @Override
     public void start(Stage stage) {
         assert stage != null : "JavaFX must provide a stage";
+
+        AnchorPane mainLayout = createMainLayout();
+        configureStage(stage, mainLayout);
+        configureEventHandlers();
+        stage.show();
+    }
+
+    private AnchorPane createMainLayout() {
         scrollPane = new ScrollPane();
         dialogContainer = new VBox();
         scrollPane.setContent(dialogContainer);
 
         userInput = new TextField();
-        sendButton = new Button("Send");
+        userInput.setPromptText("drop a command here...");
+        sendButton = new Button("▶ SEND");
 
         AnchorPane mainLayout = new AnchorPane();
         mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
+        mainLayout.setStyle(WINDOW_STYLE);
 
+        configureLayout(mainLayout);
+        return mainLayout;
+    }
+
+        configureLayout(mainLayout);
+        return mainLayout;
+    }
+
+    private void configureStage(Stage stage, AnchorPane mainLayout) {
         stage.setScene(new Scene(mainLayout));
-        stage.setTitle("Jeremy");
+        stage.setTitle(WINDOW_TITLE);
         stage.setResizable(false);
-        stage.setMinHeight(600.0);
-        stage.setMinWidth(400.0);
+        stage.setMinHeight(WINDOW_HEIGHT);
+        stage.setMinWidth(WINDOW_WIDTH);
+    }
 
-        mainLayout.setPrefSize(400.0, 600.0);
-        scrollPane.setPrefSize(385, 535);
+    private void configureLayout(AnchorPane mainLayout) {
+        mainLayout.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        scrollPane.setPrefSize(SCROLL_PANE_WIDTH, SCROLL_PANE_HEIGHT);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setVvalue(1.0);
+        scrollPane.setVvalue(BOTTOM_SCROLL_VALUE);
         scrollPane.setFitToWidth(true);
         dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        dialogContainer.setSpacing(DIALOG_SPACING);
+        dialogContainer.setStyle(WINDOW_STYLE);
 
-        userInput.setPrefWidth(325.0);
-        sendButton.setPrefWidth(55.0);
-        AnchorPane.setTopAnchor(scrollPane, 1.0);
-        AnchorPane.setBottomAnchor(sendButton, 1.0);
-        AnchorPane.setRightAnchor(sendButton, 1.0);
-        AnchorPane.setLeftAnchor(userInput, 1.0);
-        AnchorPane.setBottomAnchor(userInput, 1.0);
+        userInput.setPrefWidth(INPUT_WIDTH);
+        userInput.setStyle(INPUT_STYLE);
+        sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
+        sendButton.setStyle(BUTTON_STYLE);
+        scrollPane.setStyle("-fx-background: #1f1e1d; -fx-border-color: #5d5a52;");
+        AnchorPane.setTopAnchor(scrollPane, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(sendButton, LAYOUT_PADDING);
+        AnchorPane.setRightAnchor(sendButton, LAYOUT_PADDING);
+        AnchorPane.setLeftAnchor(userInput, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(userInput, LAYOUT_PADDING);
+    }
 
+        userInput.setPrefWidth(INPUT_WIDTH);
+        sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
+        AnchorPane.setTopAnchor(scrollPane, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(sendButton, LAYOUT_PADDING);
+        AnchorPane.setRightAnchor(sendButton, LAYOUT_PADDING);
+        AnchorPane.setLeftAnchor(userInput, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(userInput, LAYOUT_PADDING);
+    }
+
+    private void configureEventHandlers() {
         sendButton.setOnMouseClicked(event -> handleUserInput());
         userInput.setOnAction(event -> handleUserInput());
         dialogContainer.heightProperty().addListener(
-                observable -> scrollPane.setVvalue(1.0));
-
-        stage.show();
+                observable -> scrollPane.setVvalue(BOTTOM_SCROLL_VALUE));
     }
 
     /** Adds the user's message and Jeremy's response, then clears the input. */
@@ -200,9 +244,16 @@ public class Jeremy extends Application {
         ui.showTaskDeleted(removed, tasks.size());
     }
 
-    private void addTask(Task newTask) {
+    private void addTask(Task newTask) throws JeremyException {
+        if (tasks.containsEquivalent(newTask)) {
+            throw new JeremyException("A task with the same details is already on the list.");
+        }
+        List<Task> conflicts = ScheduleConflictDetector.findConflicts(newTask, tasks.asList());
         tasks.add(newTask);
         storage.save(tasks.asList());
+        if (!conflicts.isEmpty()) {
+            ui.showScheduleConflict(conflicts);
+        }
         ui.showTaskAdded(newTask, tasks.size());
     }
 
@@ -211,10 +262,10 @@ public class Jeremy extends Application {
         assert input != null : "GUI command input must not be null";
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
-            return "I didn't quite catch that — type a command, or 'bye' to exit.";
+            return "No signal came through — type a command, or 'bye' to exit.";
         }
         if (trimmed.equalsIgnoreCase("bye")) {
-            return "Bye. Hope to see you again soon!";
+            return "Session over. Keep your deadlines loud and your stress low.";
         }
 
         try {
@@ -223,13 +274,12 @@ public class Jeremy extends Application {
 
             switch (commandWord) {
             case "list":
-                return formatTaskList("Here are the tasks in your list:", tasks.asList(), "No items stored yet.");
+                return formatTaskList("Setlist of tasks:", tasks.asList(), "No tasks on the setlist yet.");
             case "find":
                 if (args.isEmpty()) {
                     throw new JeremyException("What keyword should I search for? Use: find <keyword>.");
                 }
-                return formatTaskList("Here are the matching tasks in your list:", tasks.find(args),
-                        "No matching tasks found.");
+                return formatTaskList("Matching tracks:", tasks.find(args), "No matches in the setlist.");
             case "mark":
                 return formatMarkedTask(parser.parseIndex(args, "mark"), true);
             case "unmark":
@@ -244,7 +294,7 @@ public class Jeremy extends Application {
                 return formatAddedTask(parser.parseEvent(args));
             default:
                 throw new JeremyException(
-                        "I don't recognize '" + commandWord
+                        "That command missed the beat: '" + commandWord
                                 + "'. Try: todo, deadline, event, list, find, mark, unmark, delete, bye.");
             }
         } catch (JeremyException e) {
@@ -263,24 +313,37 @@ public class Jeremy extends Application {
         return response.toString();
     }
 
-    private String formatAddedTask(Task task) {
+    private String formatAddedTask(Task task) throws JeremyException {
+        if (tasks.containsEquivalent(task)) {
+            throw new JeremyException("A task with the same details is already on the list.");
+        }
+        List<Task> conflicts = ScheduleConflictDetector.findConflicts(task, tasks.asList());
         tasks.add(task);
         storage.save(tasks.asList());
-        return "Got it. I've added this task:\n" + task
+        String warning = conflicts.isEmpty() ? "" : formatConflictWarning(conflicts) + "\n";
+        return warning + "Got it. I've added this task:\n" + task
                 + "\nNow you have " + tasks.size() + " task(s) in the list.";
+    }
+
+    private String formatConflictWarning(List<Task> conflicts) {
+        StringBuilder warning = new StringBuilder("Warning: this task may clash with:");
+        for (Task conflict : conflicts) {
+            warning.append("\n- ").append(conflict);
+        }
+        return warning.toString();
     }
 
     private String formatMarkedTask(int index, boolean markDone) throws JeremyException {
         Task task = markDone ? tasks.markDone(index) : tasks.markNotDone(index);
         storage.save(tasks.asList());
-        String action = markDone ? "done" : "not done yet";
-        return "OK, I've marked this task as " + action + ":\n" + task;
+        String action = markDone ? "done" : "not done";
+        return "Status updated — task marked as " + action + ":\n" + task;
     }
 
     private String formatDeletedTask(int index) throws JeremyException {
         Task removed = tasks.delete(index);
         storage.save(tasks.asList());
-        return "Noted. I've removed this task:\n" + removed
+        return "Cleared from the setlist:\n" + removed
                 + "\nNow you have " + tasks.size() + " task(s) in the list.";
     }
 

@@ -1,6 +1,7 @@
 package jeremy.task;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jeremy.exception.JeremyException;
@@ -24,6 +25,17 @@ public class TaskList {
     public void add(Task task) {
         assert task != null : "Cannot add a null task";
         tasks.add(task);
+    }
+
+    /** Returns whether a task with the same type and details is already stored. */
+    public boolean containsEquivalent(Task candidate) {
+        assert candidate != null : "Candidate task must not be null";
+        for (Task task : tasks) {
+            if (hasSameDetails(task, candidate)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Task delete(int index) throws JeremyException {
@@ -58,9 +70,9 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    /** Returns the underlying list. Callers should treat this as read-mostly. */
+    /** Returns a read-only view of the current tasks. */
     public List<Task> asList() {
-        return tasks;
+        return Collections.unmodifiableList(tasks);
     }
 
     public List<Task> find(String keyword) {
@@ -84,5 +96,22 @@ public class TaskList {
                     "That task number doesn't exist. You have " + tasks.size()
                             + " task(s) — pick between 1 and " + tasks.size() + ".");
         }
+    }
+
+    private boolean hasSameDetails(Task first, Task second) {
+        if (!first.getClass().equals(second.getClass())
+                || !first.getDescription().equals(second.getDescription())) {
+            return false;
+        }
+        if (first instanceof Deadline && second instanceof Deadline) {
+            return ((Deadline) first).getBy().equals(((Deadline) second).getBy());
+        }
+        if (first instanceof Event && second instanceof Event) {
+            Event firstEvent = (Event) first;
+            Event secondEvent = (Event) second;
+            return firstEvent.getFrom().equals(secondEvent.getFrom())
+                    && firstEvent.getTo().equals(secondEvent.getTo());
+        }
+        return true;
     }
 }

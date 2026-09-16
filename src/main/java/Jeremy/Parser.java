@@ -11,17 +11,16 @@ public class Parser {
     public String getCommandWord(String fullCommand) {
         assert fullCommand != null : "Command must not be null";
         String trimmed = fullCommand.trim();
-        int spaceIndex = trimmed.indexOf(' ');
-        String word = spaceIndex >= 0 ? trimmed.substring(0, spaceIndex) : trimmed;
-        return word.toLowerCase();
+        String[] parts = trimmed.split("\\s+", 2);
+        return parts[0].toLowerCase();
     }
 
     /** Returns everything after the first token, trimmed. */
     public String getArguments(String fullCommand) {
         assert fullCommand != null : "Command must not be null";
         String trimmed = fullCommand.trim();
-        int spaceIndex = trimmed.indexOf(' ');
-        return spaceIndex >= 0 ? trimmed.substring(spaceIndex + 1).trim() : "";
+        String[] parts = trimmed.split("\\s+", 2);
+        return parts.length == 2 ? parts[1].trim() : "";
     }
 
     /** Parses a task-number argument for mark/unmark/delete style commands. */
@@ -48,6 +47,9 @@ public class Parser {
 
     public Deadline parseDeadline(String args) throws JeremyException {
         assert args != null : "Deadline arguments must not be null";
+        if (countOccurrences(args, "/by") > 1) {
+            throw new JeremyException("A deadline may contain only one '/by' parameter.");
+        }
         int byIndex = args.indexOf("/by");
         String description = byIndex >= 0 ? args.substring(0, byIndex).trim() : args.trim();
         String by = byIndex >= 0 ? args.substring(byIndex + 3).trim() : "";
@@ -64,11 +66,15 @@ public class Parser {
             throw new JeremyException(
                     "A deadline needs a '/by' date/time, e.g. deadline " + description + " /by 11/10/2019 5pm");
         }
+        ScheduleValidator.validateDateOrTime(by, "deadline");
         return new Deadline(description, by);
     }
 
     public Event parseEvent(String args) throws JeremyException {
         assert args != null : "Event arguments must not be null";
+        if (countOccurrences(args, "/from") > 1 || countOccurrences(args, "/to") > 1) {
+            throw new JeremyException("An event may contain only one '/from' and one '/to' parameter.");
+        }
         int fromIndex = args.indexOf("/from");
         int toIndex = args.indexOf("/to");
         String description = fromIndex >= 0 ? args.substring(0, fromIndex).trim() : args.trim();
@@ -90,6 +96,19 @@ public class Parser {
                     "An event needs both '/from' and '/to' date/time, e.g. "
                             + "event " + description + " /from 2/10/2019 2pm /to 4pm");
         }
+        ScheduleValidator.validateDateOrTime(from, "event start time");
+        ScheduleValidator.validateDateOrTime(to, "event end time");
+        ScheduleValidator.validateEventOrder(from, to);
         return new Event(description, from, to);
+    }
+
+    private int countOccurrences(String text, String token) {
+        int count = 0;
+        int index = 0;
+        while ((index = text.indexOf(token, index)) >= 0) {
+            count++;
+            index += token.length();
+        }
+        return count;
     }
 }
