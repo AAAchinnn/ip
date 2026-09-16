@@ -49,6 +49,7 @@ public class Jeremy extends Application {
     private VBox dialogContainer;
     private TextField userInput;
     private Button sendButton;
+    private boolean lastResponseWasError;
 
     /** Creates Jeremy with the default task data file for the JavaFX app. */
     public Jeremy() {
@@ -170,9 +171,12 @@ public class Jeremy extends Application {
         assert userInput != null && dialogContainer != null : "GUI controls must be initialized";
         String userText = userInput.getText();
         String jeremyText = getResponse(userText);
+        DialogBox responseDialog = lastResponseWasError
+                ? DialogBox.getErrorDialog(jeremyText)
+                : DialogBox.getJeremyDialog(jeremyText);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(userText),
-                DialogBox.getJeremyDialog(jeremyText));
+                responseDialog);
         userInput.clear();
     }
 
@@ -256,8 +260,10 @@ public class Jeremy extends Application {
     /** Processes a GUI command using the same parser and task data as the CLI. */
     public String getResponse(String input) {
         assert input != null : "GUI command input must not be null";
+        lastResponseWasError = false;
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
+            lastResponseWasError = true;
             return "No signal came through — type a command, or 'bye' to exit.";
         }
         if (trimmed.equalsIgnoreCase("bye")) {
@@ -294,6 +300,7 @@ public class Jeremy extends Application {
                                 + "'. Try: todo, deadline, event, list, find, mark, unmark, delete, bye.");
             }
         } catch (JeremyException e) {
+            lastResponseWasError = true;
             return e.getMessage();
         }
     }
