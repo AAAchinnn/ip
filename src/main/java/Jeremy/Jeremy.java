@@ -3,6 +3,7 @@ package jeremy;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -28,18 +29,12 @@ public class Jeremy extends Application {
     private static final double SCROLL_PANE_HEIGHT = 535.0;
     private static final double INPUT_WIDTH = 325.0;
     private static final double SEND_BUTTON_WIDTH = 55.0;
-    private static final double LAYOUT_PADDING = 1.0;
+    private static final double LAYOUT_PADDING = 8.0;
+    private static final double HEADER_HEIGHT = 42.0;
+    private static final double INPUT_BAR_HEIGHT = 42.0;
     private static final double BOTTOM_SCROLL_VALUE = 1.0;
     private static final double DIALOG_SPACING = 6.0;
     private static final String WINDOW_TITLE = "Jeremy // Task Companion";
-    private static final String WINDOW_STYLE = "-fx-background-color: #1f1e1d;";
-    private static final String INPUT_STYLE = "-fx-background-color: #e9dfd0;"
-            + " -fx-text-fill: #252323; -fx-font-family: 'Monospaced';"
-            + " -fx-font-size: 13px;";
-    private static final String BUTTON_STYLE = "-fx-background-color: #7c3f48;"
-            + " -fx-text-fill: #f7efe3; -fx-font-family: 'Monospaced';"
-            + " -fx-font-weight: bold; -fx-font-size: 12px;";
-
     private final Storage storage;
     private final TaskList tasks;
     private final Ui ui;
@@ -49,6 +44,7 @@ public class Jeremy extends Application {
     private VBox dialogContainer;
     private TextField userInput;
     private Button sendButton;
+    private Label headerLabel;
     private boolean lastResponseWasError;
 
     /** Creates Jeremy with the default task data file for the JavaFX app. */
@@ -116,13 +112,20 @@ public class Jeremy extends Application {
         dialogContainer = new VBox();
         scrollPane.setContent(dialogContainer);
 
+        headerLabel = new Label("JEREMY // TASK COMPANION");
+        headerLabel.setStyle("-fx-text-fill: " + RetroTheme.PAPER + ";"
+                + " -fx-font-family: " + RetroTheme.FONT + "; -fx-font-size: 14px;"
+                + " -fx-font-weight: bold; -fx-padding: 8px;"
+                + " -fx-border-color: " + RetroTheme.BURGUNDY + ";"
+                + " -fx-border-width: 0 0 2px 0;");
+
         userInput = new TextField();
         userInput.setPromptText("drop a command here...");
         sendButton = new Button("▶ SEND");
 
         AnchorPane mainLayout = new AnchorPane();
-        mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
-        mainLayout.setStyle(WINDOW_STYLE);
+        mainLayout.getChildren().addAll(headerLabel, scrollPane, userInput, sendButton);
+        mainLayout.setStyle(RetroTheme.backgroundStyle());
 
         configureLayout(mainLayout);
         return mainLayout;
@@ -131,7 +134,7 @@ public class Jeremy extends Application {
     private void configureStage(Stage stage, AnchorPane mainLayout) {
         stage.setScene(new Scene(mainLayout));
         stage.setTitle(WINDOW_TITLE);
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setMinHeight(WINDOW_HEIGHT);
         stage.setMinWidth(WINDOW_WIDTH);
     }
@@ -145,23 +148,37 @@ public class Jeremy extends Application {
         scrollPane.setFitToWidth(true);
         dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
         dialogContainer.setSpacing(DIALOG_SPACING);
-        dialogContainer.setStyle(WINDOW_STYLE);
+        dialogContainer.setStyle(RetroTheme.backgroundStyle());
 
         userInput.setPrefWidth(INPUT_WIDTH);
-        userInput.setStyle(INPUT_STYLE);
+        userInput.setStyle(RetroTheme.inputStyle());
         sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
-        sendButton.setStyle(BUTTON_STYLE);
-        scrollPane.setStyle("-fx-background: #1f1e1d; -fx-border-color: #5d5a52;");
-        AnchorPane.setTopAnchor(scrollPane, LAYOUT_PADDING);
-        AnchorPane.setBottomAnchor(sendButton, LAYOUT_PADDING);
+        sendButton.setStyle(RetroTheme.buttonStyle());
+        scrollPane.setStyle(RetroTheme.scrollPaneStyle());
+        AnchorPane.setTopAnchor(headerLabel, LAYOUT_PADDING);
+        AnchorPane.setLeftAnchor(headerLabel, LAYOUT_PADDING);
+        AnchorPane.setRightAnchor(headerLabel, LAYOUT_PADDING);
+        headerLabel.setMinHeight(HEADER_HEIGHT);
+        AnchorPane.setTopAnchor(scrollPane, HEADER_HEIGHT + LAYOUT_PADDING);
+        AnchorPane.setLeftAnchor(scrollPane, LAYOUT_PADDING);
+        AnchorPane.setRightAnchor(scrollPane, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(scrollPane, INPUT_BAR_HEIGHT + LAYOUT_PADDING);
         AnchorPane.setRightAnchor(sendButton, LAYOUT_PADDING);
         AnchorPane.setLeftAnchor(userInput, LAYOUT_PADDING);
+        AnchorPane.setRightAnchor(userInput, SEND_BUTTON_WIDTH + 2 * LAYOUT_PADDING);
         AnchorPane.setBottomAnchor(userInput, LAYOUT_PADDING);
+        AnchorPane.setBottomAnchor(sendButton, LAYOUT_PADDING);
     }
 
     private void configureEventHandlers() {
         sendButton.setOnMouseClicked(event -> handleUserInput());
         userInput.setOnAction(event -> handleUserInput());
+        sendButton.setOnMouseEntered(event -> sendButton.setStyle(RetroTheme.buttonHoverStyle()));
+        sendButton.setOnMouseExited(event -> sendButton.setStyle(RetroTheme.buttonStyle()));
+        userInput.focusedProperty().addListener((observable, wasFocused, isFocused) ->
+                userInput.setStyle(isFocused
+                        ? RetroTheme.inputStyle() + " -fx-border-color: " + RetroTheme.BURGUNDY_HIGHLIGHT + ";"
+                        : RetroTheme.inputStyle()));
         dialogContainer.heightProperty().addListener(
                 observable -> scrollPane.setVvalue(BOTTOM_SCROLL_VALUE));
     }
