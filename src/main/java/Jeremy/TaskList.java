@@ -27,6 +27,17 @@ public class TaskList {
         tasks.add(task);
     }
 
+    /** Returns whether a task with the same type and details is already stored. */
+    public boolean containsEquivalent(Task candidate) {
+        assert candidate != null : "Candidate task must not be null";
+        for (Task task : tasks) {
+            if (hasSameDetails(task, candidate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Task delete(int index) throws JeremyException {
         checkIndex(index, "delete");
         return tasks.remove(index - 1);
@@ -85,5 +96,22 @@ public class TaskList {
                     "That task number doesn't exist. You have " + tasks.size()
                             + " task(s) — pick between 1 and " + tasks.size() + ".");
         }
+    }
+
+    private boolean hasSameDetails(Task first, Task second) {
+        if (!first.getClass().equals(second.getClass())
+                || !first.getDescription().equals(second.getDescription())) {
+            return false;
+        }
+        if (first instanceof Deadline && second instanceof Deadline) {
+            return ((Deadline) first).getBy().equals(((Deadline) second).getBy());
+        }
+        if (first instanceof Event && second instanceof Event) {
+            Event firstEvent = (Event) first;
+            Event secondEvent = (Event) second;
+            return firstEvent.getFrom().equals(secondEvent.getFrom())
+                    && firstEvent.getTo().equals(secondEvent.getTo());
+        }
+        return true;
     }
 }

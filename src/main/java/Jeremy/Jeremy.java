@@ -240,7 +240,10 @@ public class Jeremy extends Application {
         ui.showTaskDeleted(removed, tasks.size());
     }
 
-    private void addTask(Task newTask) {
+    private void addTask(Task newTask) throws JeremyException {
+        if (tasks.containsEquivalent(newTask)) {
+            throw new JeremyException("A task with the same details is already on the list.");
+        }
         List<Task> conflicts = ScheduleConflictDetector.findConflicts(newTask, tasks.asList());
         tasks.add(newTask);
         storage.save(tasks.asList());
@@ -306,7 +309,10 @@ public class Jeremy extends Application {
         return response.toString();
     }
 
-    private String formatAddedTask(Task task) {
+    private String formatAddedTask(Task task) throws JeremyException {
+        if (tasks.containsEquivalent(task)) {
+            throw new JeremyException("A task with the same details is already on the list.");
+        }
         List<Task> conflicts = ScheduleConflictDetector.findConflicts(task, tasks.asList());
         tasks.add(task);
         storage.save(tasks.asList());
