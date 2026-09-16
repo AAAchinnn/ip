@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'com.gradleup.shadow' version '9.5.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['main/java']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['test/java']
+        }
+    }
+}
+
+javafx {
+    version = '17.0.13'
+    modules = ['javafx.controls']
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+application {
+    mainClass = 'jeremy.Jeremy'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    enableAssertions = true
+}
+
+tasks.named('run') {
+    enableAssertions = true
+}
+
+tasks.named('shadowJar') {
+    archiveBaseName = 'jeremy'
+    archiveClassifier = ''
+    mergeServiceFiles()
+}
