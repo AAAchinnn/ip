@@ -30,6 +30,15 @@ public class Jeremy extends Application {
     private static final double SEND_BUTTON_WIDTH = 55.0;
     private static final double LAYOUT_PADDING = 1.0;
     private static final double BOTTOM_SCROLL_VALUE = 1.0;
+    private static final double DIALOG_SPACING = 6.0;
+    private static final String WINDOW_TITLE = "Jeremy // Task Companion";
+    private static final String WINDOW_STYLE = "-fx-background-color: #1f1e1d;";
+    private static final String INPUT_STYLE = "-fx-background-color: #e9dfd0;"
+            + " -fx-text-fill: #252323; -fx-font-family: 'Monospaced';"
+            + " -fx-font-size: 13px;";
+    private static final String BUTTON_STYLE = "-fx-background-color: #7c3f48;"
+            + " -fx-text-fill: #f7efe3; -fx-font-family: 'Monospaced';"
+            + " -fx-font-weight: bold; -fx-font-size: 12px;";
 
     private final Storage storage;
     private final TaskList tasks;
@@ -118,10 +127,6 @@ public class Jeremy extends Application {
         return mainLayout;
     }
 
-        configureLayout(mainLayout);
-        return mainLayout;
-    }
-
     private void configureStage(Stage stage, AnchorPane mainLayout) {
         stage.setScene(new Scene(mainLayout));
         stage.setTitle(WINDOW_TITLE);
@@ -146,15 +151,6 @@ public class Jeremy extends Application {
         sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
         sendButton.setStyle(BUTTON_STYLE);
         scrollPane.setStyle("-fx-background: #1f1e1d; -fx-border-color: #5d5a52;");
-        AnchorPane.setTopAnchor(scrollPane, LAYOUT_PADDING);
-        AnchorPane.setBottomAnchor(sendButton, LAYOUT_PADDING);
-        AnchorPane.setRightAnchor(sendButton, LAYOUT_PADDING);
-        AnchorPane.setLeftAnchor(userInput, LAYOUT_PADDING);
-        AnchorPane.setBottomAnchor(userInput, LAYOUT_PADDING);
-    }
-
-        userInput.setPrefWidth(INPUT_WIDTH);
-        sendButton.setPrefWidth(SEND_BUTTON_WIDTH);
         AnchorPane.setTopAnchor(scrollPane, LAYOUT_PADDING);
         AnchorPane.setBottomAnchor(sendButton, LAYOUT_PADDING);
         AnchorPane.setRightAnchor(sendButton, LAYOUT_PADDING);
@@ -321,12 +317,12 @@ public class Jeremy extends Application {
         tasks.add(task);
         storage.save(tasks.asList());
         String warning = conflicts.isEmpty() ? "" : formatConflictWarning(conflicts) + "\n";
-        return warning + "Got it. I've added this task:\n" + task
+        return warning + "Locked in. Added to the setlist:\n" + task
                 + "\nNow you have " + tasks.size() + " task(s) in the list.";
     }
 
     private String formatConflictWarning(List<Task> conflicts) {
-        StringBuilder warning = new StringBuilder("Warning: this task may clash with:");
+        StringBuilder warning = new StringBuilder("Heads up: this task may clash with:");
         for (Task conflict : conflicts) {
             warning.append("\n- ").append(conflict);
         }

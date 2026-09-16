@@ -31,6 +31,20 @@ public class TaskListTest {
     }
 
     @Test
+    public void containsEquivalent_sameTodo_returnsTrue() {
+        taskList.add(new Todo("read book"));
+
+        assertTrue(taskList.containsEquivalent(new Todo("read book")));
+    }
+
+    @Test
+    public void containsEquivalent_differentTask_returnsFalse() {
+        taskList.add(new Todo("read book"));
+
+        assertFalse(taskList.containsEquivalent(new Todo("return book")));
+    }
+
+    @Test
     public void constructor_fromExistingList_copiesRatherThanAliases() {
         List<Task> seed = new java.util.ArrayList<>();
         seed.add(new Todo("borrowed task"));
