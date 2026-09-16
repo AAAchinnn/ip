@@ -37,6 +37,12 @@ From the project root, run:
 The application opens the Jeremy GUI. Type a command in the input field and
 press **Enter** or select **Send**.
 
+The interface uses a retro, text-only visual style with monospaced lettering,
+charcoal backgrounds, burgundy accents, and olive user messages. The window
+can be resized, the conversation scrolls to the latest response, and the
+input field and send button provide focus and hover feedback. Error responses
+are shown with a red warning style and a `⚠` marker.
+
 ### Build and test
 
 Run the automated tests with:
@@ -44,6 +50,9 @@ Run the automated tests with:
 ```bash
 ./gradlew clean test
 ```
+
+The tests are stored under `src/test/java` and use temporary files for
+persistence checks, so they do not modify the real `data/` directory.
 
 Create the executable fat JAR with:
 
@@ -99,6 +108,8 @@ needed.
 src/
 ├── main/java/jeremy/
 │   ├── Jeremy.java
+│   ├── DialogBox.java
+│   ├── RetroTheme.java
 │   ├── parser/
 │   ├── storage/
 │   ├── task/
@@ -106,6 +117,7 @@ src/
 │   └── exception/
 └── test/java/jeremy/
     ├── parser/
+    ├── storage/
     └── task/
 ```
 
