@@ -107,7 +107,7 @@ public class Ui {
 
     public void showScheduleConflict(List<Task> conflicts) {
         showLine();
-        System.out.println(" Heads up: this task may clash with:");
+        System.out.println(" Warning: this task may clash with:");
         for (Task conflict : conflicts) {
             System.out.println("   - " + conflict);
         }
