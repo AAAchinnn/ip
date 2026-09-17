@@ -11,7 +11,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -46,6 +46,7 @@ application {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release = 25
 }
 
 tasks.named('test') {
@@ -57,9 +58,6 @@ tasks.named('run') {
     enableAssertions = true
 }
 
-// Keep the ordinary JAR separate from the executable fat JAR. This prevents
-// Gradle's application distribution tasks from seeing the same file as both
-// an input and an output of different tasks.
 tasks.named('jar') {
     archiveClassifier = 'plain'
 }
