@@ -41,7 +41,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'jeremy.Launcher'
+    mainClass = 'jeremy.Jeremy'
 }
 
 tasks.withType(JavaCompile).configureEach {
