@@ -38,6 +38,11 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    runtimeOnly 'org.openjfx:javafx-graphics:17.0.13:win'
+    runtimeOnly 'org.openjfx:javafx-graphics:17.0.13:linux'
+    runtimeOnly 'org.openjfx:javafx-graphics:17.0.13:mac'
+    runtimeOnly 'org.openjfx:javafx-graphics:17.0.13:mac-aarch64'
 }
 
 application {
